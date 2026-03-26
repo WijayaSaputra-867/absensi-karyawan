@@ -14,7 +14,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::select('id','name', 'role')->orderBy('name', 'ASC')->get(); // mengambil semua data pengguna dan mengurutkan nya berdasakan nama dari A-Z
+        $users = User::select('id', 'name', 'role')->orderBy('name', 'ASC')->paginate(5); // mengambil semua data pengguna dan mengurutkan nya berdasakan nama dari A-Z
         return Inertia::render('Users/Index', compact('users')); // menjalankan tampilan react dan mengirim data pengguna ke tampilan react
     }
 
