@@ -1,4 +1,6 @@
-import { Head, router } from '@inertiajs/react';
+import { Head, router, Link } from '@inertiajs/react';
+import { useState, useEffect } from 'react';
+import { Input } from '@/components/ui/input';
 import {
     Pagination,
     PaginationContent,
@@ -29,11 +31,27 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function UsersIndex({ users }: { users: PaginatedUsers }) {
+    const [search, setSearch] = useState('');
     const handlePageChange = (url: string | null) => {
         if (url) {
             router.get(url, {}, { preserveState: true, preserveScroll: true });
         }
     };
+
+    useEffect(() => {
+        const timeout = setTimeout(() => {
+            router.get(
+                index(),
+                { search },
+                {
+                    preserveState: true,
+                    replace: true,
+                }
+            );
+        }, 500);
+
+        return () => clearTimeout(timeout);
+    }, [search]);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -42,6 +60,26 @@ export default function UsersIndex({ users }: { users: PaginatedUsers }) {
                 <h3 className="text-2xl font-semibold text-gray-800 dark:text-white">
                     Table User
                 </h3>
+                <div className="flex flex-row p-4">
+                    <div className='w-1/2'>
+                        <Link
+                            href='#'
+                            className='inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium whitespace-nowrap text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50'
+                        >
+                            Add Users
+                        </Link>
+                    </div>
+                    <div className='w-1/2'>
+                        <Input
+                            name='search'
+                            type='text'
+                            value={search}
+                            onChange={e => setSearch(e.target.value)}
+                            placeholder='Search by name ........'
+                            className='w-full bg-background text-foreground placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2'
+                        />
+                    </div>
+                </div>
                 <Table>
                     <TableCaption>List of users</TableCaption>
                     <TableHeader>

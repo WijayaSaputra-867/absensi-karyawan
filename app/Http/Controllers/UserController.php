@@ -12,9 +12,21 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::select('id', 'name', 'role')->orderBy('name', 'ASC')->paginate(5); // mengambil semua data pengguna dan mengurutkan nya berdasakan nama dari A-Z
+        $search = $request->input('search', ''); // mengambil data dari input type
+
+        $users = User::query() // membuat query user
+            ->select('id', 'name', 'role') // memilih field yang akan tampil
+            ->when(
+                $search,
+                fn($q) => $q
+                    ->where('name', 'like', "%{$search}%") // akan mengganti $users yang lama jika kondisi terpenuhi
+            )
+            ->orderBy('name', 'ASC') // mengurutkan berdasarkan nama dari A sampai ke Z
+            ->paginate(5) // membatasi data perhalaman menjadi beberapa halaman saja
+            ->withQueryString(); // agar search terbaca di url
+
         return Inertia::render('Users/Index', compact('users')); // menjalankan tampilan react dan mengirim data pengguna ke tampilan react
     }
 
