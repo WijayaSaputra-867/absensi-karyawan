@@ -1,5 +1,16 @@
 import { Head, router, Link } from '@inertiajs/react';
+import { Ellipsis, Eye, SquarePen, Cog, Trash2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { Input } from '@/components/ui/input';
 import {
     Pagination,
@@ -19,7 +30,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
-import { index } from '@/routes/users';
+import { index, create } from '@/routes/users';
 import type { BreadcrumbItem } from '@/types';
 import type { PaginatedUsers } from '@/types/users';
 
@@ -63,7 +74,7 @@ export default function UsersIndex({ users }: { users: PaginatedUsers }) {
                 <div className="flex flex-row p-4">
                     <div className='w-1/2'>
                         <Link
-                            href='#'
+                            href={create()}
                             className='inline-flex h-9 items-center justify-center rounded-md bg-primary px-4 py-2 text-sm font-medium whitespace-nowrap text-primary-foreground shadow-sm transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50'
                         >
                             Add Users
@@ -96,7 +107,39 @@ export default function UsersIndex({ users }: { users: PaginatedUsers }) {
                                 <TableCell>{(users.current_page - 1) * users.per_page + idx + 1}</TableCell>
                                 <TableCell>{user.name}</TableCell>
                                 <TableCell>{user.role}</TableCell>
-                                <TableCell className="text-right">#</TableCell>
+                                <TableCell className="text-right">
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant="outline"><Ellipsis/></Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent>
+                                            <DropdownMenuGroup>
+                                            <DropdownMenuLabel>Management Account</DropdownMenuLabel>
+                                            <DropdownMenuItem>
+                                                    <Link href='#' className='flex gap-4'>
+                                                        <Eye className='my-auto' /> Details
+                                                    </Link>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem>
+                                                    <Link href='#' className='flex gap-4'>
+                                                        <SquarePen className='my-auto'/> Edit
+                                                    </Link>
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem>
+                                                    <Link href='#' className='flex gap-4'>
+                                                        <Cog className='my-auto'/> Edit Password
+                                                    </Link>
+                                            </DropdownMenuItem>
+                                            </DropdownMenuGroup>
+                                            <DropdownMenuSeparator />
+                                            <DropdownMenuGroup>
+                                            <DropdownMenuItem variant='destructive'>
+                                                    <Trash2 className='my-auto'/> Delete
+                                            </DropdownMenuItem>
+                                            </DropdownMenuGroup>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

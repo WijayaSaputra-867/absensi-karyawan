@@ -12,8 +12,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'dashboard')->name('dashboard');
 });
 
-Route::middleware(['auth'])->group(function(){
+Route::middleware(['auth'])->group(function () {
     Route::get('/users', [UserController::class, 'index'])->name('users.index');
+    Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
+    Route::post('/users', [UserController::class, 'store'])->name('users.store');
+    Route::get('/users/{user:id}', [UserController::class, 'show'])->name('users.show');
+    Route::get('/users/{user:id}/edit', [UserController::class, 'edit'])->name('users.edit');
+    Route::put('/users/{user:id}/', [UserController::class, 'update'])->name('users.update');
+    Route::delete('/users/{user:id}/', [UserController::class, 'destroy'])->name('users.destroy');
 });
 
-require __DIR__.'/settings.php';
+require __DIR__ . '/settings.php';
