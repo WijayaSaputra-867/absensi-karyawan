@@ -22,3 +22,10 @@ export type PaginatedUsers = {
     next_page_url: string | null;
     prev_page_url: string | null;
 };
+
+export type GetOne = {
+    id: number,
+    name: string,
+    role: string,
+    email: string,
+}

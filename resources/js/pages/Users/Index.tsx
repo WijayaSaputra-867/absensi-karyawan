@@ -30,7 +30,8 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
-import { index, create } from '@/routes/users';
+import { index, create, edit } from '@/routes/users';
+import {password as editPassword} from '@/routes/users/edit';
 import type { BreadcrumbItem } from '@/types';
 import type { PaginatedUsers } from '@/types/users';
 
@@ -121,12 +122,12 @@ export default function UsersIndex({ users }: { users: PaginatedUsers }) {
                                                     </Link>
                                             </DropdownMenuItem>
                                             <DropdownMenuItem>
-                                                    <Link href='#' className='flex gap-4'>
+                                                    <Link href={edit(user.id)} className='flex gap-4'>
                                                         <SquarePen className='my-auto'/> Edit
                                                     </Link>
                                             </DropdownMenuItem>
                                             <DropdownMenuItem>
-                                                    <Link href='#' className='flex gap-4'>
+                                                    <Link href={editPassword(user.id)} className='flex gap-4'>
                                                         <Cog className='my-auto'/> Edit Password
                                                     </Link>
                                             </DropdownMenuItem>

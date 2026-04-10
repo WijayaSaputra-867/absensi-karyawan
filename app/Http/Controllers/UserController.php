@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
 
 class UserController extends Controller
@@ -43,7 +44,21 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|min:4|max:255',
+            'role' => 'in:admin,employee',
+            'email' => 'required|string|min:4|max:255|unique:users,email',
+            'password' => ['required', 'confirmed', Password::min(8)->mixedCase()->letters()->numbers()->symbols()]
+        ]); // melakukan validasi agar menyesuaikan dengan fieldnya
+
+        User::create([
+            'name' => $request->name,
+            'role' => $request->role,
+            'email' => $request->email,
+            'password' => $request->password
+        ]); // menambahkan data user melalui model
+
+        return redirect()->back(); // mengembalikan ke halaman sebelumnya
     }
 
     /**
@@ -57,23 +72,46 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(User $user)
     {
-        //
+        return Inertia::render('Users/Edit', compact('user'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, User $user)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|min:4|max:255',
+            'role' => 'in:admin,employee',
+            'email' => 'required|string|min:4|max:255|unique:users,email,' . $user->id
+        ]); // melakukan validasi agar menyesuaikan dengan fieldnya
+
+        $user->update([
+            'name' => $request->name,
+            'role' => $request->role,
+            'email' => $request->email
+        ]); // mengubah data user berdasarkan model
+
+        return redirect()->back(); // mengembalikan ke halaman sebelumnya
     }
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
+    {
+        //
+    }
+
+    public function editPassword(User $user)
+    {
+        // dd($user);
+        return Inertia::render('Users/Password', compact('user'));
+    }
+
+    public function updatePassword(User $user)
     {
         //
     }

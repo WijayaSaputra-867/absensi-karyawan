@@ -14,38 +14,39 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import AppLayout from '@/layouts/app-layout';
-import { index, create, store } from '@/routes/users';
+import { index, edit, update } from '@/routes/users';
 import type { BreadcrumbItem } from '@/types';
+import type { GetOne } from '@/types/users';
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Manage Users',
-        href: index(),
-    },
-    {
-        title: 'Add User',
-        href: create()
-    }
-];
 
-export default function UsersCreate() {
-    const { data, setData, post, errors, reset, processing, recentlySuccessful } = useForm({
-        'name': '',
-        'role': 'employee',
-        'email': '',
-        'password': '',
-        'password_confirmation': '',
+export default function UsersEdit({ user }: { user: GetOne }) {
+
+    const breadcrumbs: BreadcrumbItem[] = [
+        {
+            title: 'Manage Users',
+            href: index(),
+        },
+        {
+            title: 'Edit User',
+            href: edit(user.id)
+        }
+    ];
+
+    const { data, setData, put, errors, reset, processing, recentlySuccessful } = useForm({
+        'name': user.name,
+        'role': user.role,
+        'email': user.email,
     });
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        post(store().url);
+        put(update(user.id).url);
         reset();
     };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Add a new User" />
+            <Head title="Edit an User" />
             <div className="flex h-full flex-1 flex-col gap-4 overflow-x-auto rounded-xl p-4">
                 <h3 className="text-2xl font-semibold text-gray-800 dark:text-white">
                     Create a New User
@@ -79,27 +80,15 @@ export default function UsersCreate() {
                         <Input type='Email' name='email' id='email' value={data.email} onChange={(e) => setData('email', e.target.value)}  />
                         <InputError className='mt-2' message={errors.email} />
                     </div>
-                    {/* div untuk input password */}
-                    <div>
-                        <Label htmlFor='password'>Password</Label>
-                        <Input type='password' name='password'  id='password'  value={data.password} onChange={(e) => setData('password', e.target.value)}/>
-                        <InputError className='mt-2' message={errors.password} />
-                    </div>
-                    {/* div untuk input password */}
-                    <div>
-                        <Label htmlFor='password_confirmation'>Confirm Password</Label>
-                        <Input type='password' name='password_confirmation' id='password_confirmation' value={data.password_confirmation} onChange={(e) => setData('password_confirmation', e.target.value)} />
-                        <InputError className='mt-2' message={errors.password_confirmation} />
-                    </div>
                     {/* div untuk button submit */}
                     <div className='flex justify-end gap-4'>
-                        <Button type='submit' disabled={processing}>Save</Button>
+                        <Button type='submit' disabled={processing}>Edit</Button>
 
                         <Transition show={recentlySuccessful} enter='transition ease-in-out' enterFrom='opacity-0' leave='transition ease-in-out' leaveTo='opacity-0'>
                             <span>
                                 <CircleCheckBig className='mx-auto text-xs text-gray-600'/>
                                 <p className='text-sm text-gray-600 my-auto'>
-                                    Saved.
+                                    Edited.
                                 </p>
                             </span>
                         </Transition>
