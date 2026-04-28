@@ -24,8 +24,8 @@ export type PaginatedUsers = {
 };
 
 export type GetOne = {
-    id: number,
-    name: string,
-    role: string,
-    email: string,
+    id: number;
+    name: string;
+    role: string;
+    email: string;
 }

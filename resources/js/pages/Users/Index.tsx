@@ -1,15 +1,26 @@
 import { Head, router, Link } from '@inertiajs/react';
 import { Ellipsis, Eye, SquarePen, Cog, Trash2 } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogMedia,
+    AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Input } from '@/components/ui/input';
 import {
@@ -30,7 +41,7 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
-import { index, create, edit } from '@/routes/users';
+import { index, create, edit, destroy } from '@/routes/users';
 import {password as editPassword} from '@/routes/users/edit';
 import type { BreadcrumbItem } from '@/types';
 import type { PaginatedUsers } from '@/types/users';
@@ -44,10 +55,19 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 export default function UsersIndex({ users }: { users: PaginatedUsers }) {
     const [search, setSearch] = useState('');
+    const [deleteUserId, setDeleteUserId] = useState(0);
+    const [deleteUserName, setDeleteUserName] = useState('');
+    const [showAlert, setShowAlert ]= useState(false);
     const handlePageChange = (url: string | null) => {
         if (url) {
             router.get(url, {}, { preserveState: true, preserveScroll: true });
         }
+    };
+
+    const handleDelete = () => {
+        router.delete(destroy(deleteUserId));
+        setDeleteUserId(0);
+        setDeleteUserName('');
     };
 
     useEffect(() => {
@@ -134,8 +154,12 @@ export default function UsersIndex({ users }: { users: PaginatedUsers }) {
                                             </DropdownMenuGroup>
                                             <DropdownMenuSeparator />
                                             <DropdownMenuGroup>
-                                            <DropdownMenuItem variant='destructive'>
-                                                    <Trash2 className='my-auto'/> Delete
+                                            <DropdownMenuItem variant='destructive' onSelect={() => {
+                                                    setDeleteUserId(user.id);
+                                                    setDeleteUserName(user.name);
+                                                    setShowAlert(true);
+                                                }} className='hover:cursor-pointer'>
+                                                    <Trash2 className='my-auto' /> Delete
                                             </DropdownMenuItem>
                                             </DropdownMenuGroup>
                                         </DropdownMenuContent>
@@ -187,6 +211,23 @@ export default function UsersIndex({ users }: { users: PaginatedUsers }) {
                     </Pagination>
                 )}
             </div>
+            <AlertDialog open={showAlert} onOpenChange={setShowAlert}>
+                <AlertDialogContent className='max-w-3xl'>
+                    <AlertDialogHeader className='flex flex-col'>
+                        <AlertDialogMedia className='bg-destructive/10 text-destructive dark:bg-destructive/20 dark:text-destructive self-center'>
+                            <Trash2 />
+                        </AlertDialogMedia>
+                        <AlertDialogTitle>Are you sure want to delete {deleteUserName}?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This action cannot be undone. This will permanently delete that users from this website
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction variant='destructive' onClick={handleDelete}>Delete</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </AppLayout>
     );
 }

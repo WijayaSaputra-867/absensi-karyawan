@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rules\Password;
 use Inertia\Inertia;
 
@@ -52,6 +53,7 @@ class UserController extends Controller
         ]); // melakukan validasi agar menyesuaikan dengan fieldnya
 
         User::create([
+            'id' => Str::uuid(),
             'name' => $request->name,
             'role' => $request->role,
             'email' => $request->email,
@@ -100,9 +102,11 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(User $user)
     {
-        //
+        // dd($user);
+        $user->delete(); // menghapus data user
+        return redirect()->back(); //  mengembalikan ke halaman sebelumnya
     }
 
     public function editPassword(User $user)
